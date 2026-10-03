@@ -39,26 +39,88 @@ function saveTask(){
     const status = $("#selStatus").val();
     const budget = $("#numBudget").val();
 
-    // Build an object using our model
-    const taskToSave = new Task(
-        title,
-        desc,
-        color,
-        date,
-        status,
-        budget
-    );
+    // Start by assuming there are no errors
+    let hasError = false;
 
-    console.log(taskToSave);
+    // Clear old red borders first
+    $("#txtTitle").css("border", "");
+    $("#txtDescription").css("border", "");
+    $("#selColor").css("border", "");
+    $("#selDate").css("border", "");
+    $("#selStatus").css("border", "");
+    $("#numBudget").css("border", "");
 
-    displayTask(taskToSave);
+    // Check each field
+    if(title === ""){
+        $("#txtTitle").css("border", "solid 2px red");
+        hasError = true;
+    }
+
+    if(desc === ""){
+        $("#txtDescription").css("border", "solid 2px red");
+        hasError = true;
+    }
+
+    if(color === ""){
+        $("#selColor").css("border", "solid 2px red");
+        hasError = true;
+    }
+
+    if(date === ""){
+        $("#selDate").css("border", "solid 2px red");
+        hasError = true;
+    }
+
+    if(status === ""){
+        $("#selStatus").css("border", "solid 2px red");
+        hasError = true;
+    }
+
+    if(budget === ""){
+        $("#numBudget").css("border", "solid 2px red");
+        hasError = true;
+    }
+
+    // Only create and display the Task if there are NO errors
+    if(hasError === false){
+
+        const taskToSave = new Task(
+            title,
+            desc,
+            color,
+            date,
+            status,
+            budget
+        );
+
+        console.log(taskToSave);
+
+        displayTask(taskToSave);
+        
+        // Save to local storage
+        let savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+        savedTasks.push(taskToSave);
+
+        localStorage.setItem("tasks", JSON.stringify(savedTasks));
+
+        // Clear Form Fields
+        $("#txtTitle").val("");
+        $("#txtDescription").val("");
+        $("#selColor").val("");
+        $("#selDate").val("");
+        $("#selStatus").val("");
+        $("#numBudget").val("");
+    }
 }
+
 function displayTask(task){
 
     let syntax = `
         <div class="task" style="border-left-color:${task.color}">
+
             <div class="info">
-                <h4>${task.title}</h4>
+                <h4>${task.title}</h4>=
                 <p>${task.desc}</p>
             </div>
 
@@ -68,11 +130,13 @@ function displayTask(task){
                 <label>Due: ${task.date}</label>
                 <label>Budget: $${task.budget}</label>
             </div>
+
         </div>
     `;
 
     $(".list").append(syntax);
 }
+
 function loadTasks(){
     // AJAX = Asynchronous JavaScript and XML 
     //Allows to communicate with a server without refreshing the page
