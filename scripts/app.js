@@ -1,5 +1,5 @@
 // API = Address of the task server
-
+const API = "https://106api-b0bnggbsgnezbzcz.westus3-01.azurewebsites.net/api/tasks";
 /* YOUR BROWSER                SERVER
 
 "Give me my tasks"
@@ -12,17 +12,14 @@
       │
  receives tasks 
  */
-
-const API = "https://106api-b0bnggbsgnezbzcz.westus3-01.azurewebsites.net/api/tasks";
-
-function init(){
+    // function init(){
     // init --> wait until the event happens
     // init() --> execute it NOW  
 
-    console.log("hello from the init");
-}
+    //console.log("hello from the init");
+//}
 
-window.onload = init;
+// window.onload = init;
 // function init{} wait until the page loads, then execute init 
 // force that the html and the css gets resolved before
 // that i execute the logic
@@ -31,7 +28,7 @@ function saveTask(){
 
     console.log("Saving task");
 
-    // Read the values of each of the six inputs
+    // 1. Get values from the DOM
     const title = $("#txtTitle").val();
     const desc = $("#txtDescription").val();
     const color = $("#selColor").val();
@@ -39,10 +36,12 @@ function saveTask(){
     const status = $("#selStatus").val();
     const budget = $("#numBudget").val();
 
-    // Start by assuming there are no errors
+
+    // 2. Start by assuming there are no errors
     let hasError = false;
 
-    // Clear old red borders first
+
+    // Clear old red borders
     $("#txtTitle").css("border", "");
     $("#txtDescription").css("border", "");
     $("#selColor").css("border", "");
@@ -50,7 +49,8 @@ function saveTask(){
     $("#selStatus").css("border", "");
     $("#numBudget").css("border", "");
 
-    // Check each field
+
+    // 3. Validate inputs
     if(title === ""){
         $("#txtTitle").css("border", "solid 2px red");
         hasError = true;
@@ -81,7 +81,8 @@ function saveTask(){
         hasError = true;
     }
 
-    // Only create and display the Task if there are NO errors
+
+    // 4. Only continue if validation passed
     if(hasError === false){
 
         const taskToSave = new Task(
@@ -95,22 +96,41 @@ function saveTask(){
 
         console.log(taskToSave);
 
-        displayTask(taskToSave);
-        
-        // Save to local storage
-        let savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-        savedTasks.push(taskToSave);
+        // 5. Send Task to server
+        $.ajax({
 
-        localStorage.setItem("tasks", JSON.stringify(savedTasks));
+            type: "POST",// http verb: CREATE
+            url: API,
+            data: JSON.stringify(taskToSave), // Convert the object to a string so the server can understand it
+            contentType: "application/json", // Tell the server what kind of data we are sending
 
-        // Clear Form Fields
-        $("#txtTitle").val("");
-        $("#txtDescription").val("");
-        $("#selColor").val("");
-        $("#selDate").val("");
-        $("#selStatus").val("");
-        $("#numBudget").val("");
+            success: function(created){ // created is just the variable name for the response from the server
+
+                console.log(created);
+
+                displayTask(created); // Reuse our display function to show the task
+
+                // Clear form fields
+                $("#txtTitle").val("");
+                $("#txtDescription").val("");
+                $("#selColor").val("#000000");
+                $("#selDate").val("");
+                $("#selStatus").val("");
+                $("#numBudget").val("");
+
+            },
+
+            error: function(fails){
+
+                console.log(fails);
+
+            }
+
+        });
+
+
+    
     }
 }
 
@@ -120,7 +140,7 @@ function displayTask(task){
         <div class="task" style="border-left-color:${task.color}">
 
             <div class="info">
-                <h4>${task.title}</h4>=
+                <h4>${task.title}</h4>
                 <p>${task.desc}</p>
             </div>
 
@@ -134,6 +154,7 @@ function displayTask(task){
         </div>
     `;
 
+    // Inject the new HTML into the DOM Tree
     $(".list").append(syntax);
 }
 
@@ -143,11 +164,11 @@ function loadTasks(){
 
     $.ajax({
 
-        type: "GET",
+        type: "GET", // http verb: READ
 
-        url: API,
+        url: API,    // Desitnation of the server
 
-        dataType: "json",
+        dataType: "json", // Expected format of the response
 
         success: function(data){
 
@@ -159,7 +180,7 @@ function loadTasks(){
             // Looping through every task
             for(let i = 0; i < data.length; i++){
 
-                displayTask(data[i]);
+                displayTask(data[i]); // Reuse our display function to show the task
 
             }
 
@@ -174,12 +195,31 @@ function loadTasks(){
     });
 }
 
+function update(){
+    $.ajax({
+        type : "PUT", // http verb: Update
+        url: "https://106api-b0bnggbsgnezbzcz.westus3-01.azurewebsites.net/api/tasks/1",
+        data: JSON.stringify({
+            title:"New message"
+        }),
+        contentType: "application/json",
+        success: function(response){
+            console.log(response);
+        },
+        error: function(failure){
+            console.log(failure);
+        }
+
+    })
+}
+
 function init(){
 
     console.log("App initialized");
 
+    // Hookup the Save Button
     $("#btnSave").click(saveTask);
-
+    // Load Data from the server immediately
     loadTasks();
 }
 
@@ -194,6 +234,7 @@ let message = `Hello ${name}`;
 
 // JSON = common way for programs to exchange data. It is a text format that looks like an object, but it is not an object. It is a string.
 
+/* Example of JSON
 [
     {
         "title": "Pay Bills",
@@ -201,4 +242,4 @@ let message = `Hello ${name}`;
         "status": "New"
     }
 ]
-
+*/
