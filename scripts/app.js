@@ -213,12 +213,68 @@ function update(){
     })
 }
 
+function deleteTask(){
+    console.log("Deleting task");
+
+    // 1. Context: 'this' is the specific button that was clicked
+    let btn = $(this);
+
+    // 2. Find the parent div with the class task
+    let taskElement = btn.parents(".task");
+
+    // 3. Get the ID that we save in the HTML
+    let id=taskElement.attr("id");
+
+    // Now use the ID to delete the element that you select
+
+    console.log(id);
+
+    $.ajax({
+        type: "DELETE",
+        url: API + "/" + id, // URL / API / Tasks / x
+        success: function(){
+            taskElement.fadeOut(500, function(){
+                $(this).remove(); // Remove the task element from the DOM
+            }); 
+        }, 
+        error: function(failure){
+            console.log(failure);
+        }
+    });
+}
+
+function filter(status){
+    if (status === "all") { // = assing , == compare, === compare and respond w/ a true or false
+        $(".task").show();
+    } else {
+        $(".task").hide();
+    }
+    // Show only those that match 
+    // We cna look at the text inside the label
+    $(".task").each(function(){
+        let taskStatus = $(this).find(".status").text();
+        if (taskStatus === status) 
+        {
+            $(this).show();
+        } 
+    });
+}
+
 function init(){
 
     console.log("App initialized");
 
     // Hookup the Save Button
     $("#btnSave").click(saveTask);
+    $("#btnAll").click(function(){filter("All")});
+    $("#btnDone").click(function(){filter("Completed")});
+    $("#btnNew").click(function(){filter("New")});
+    // The regular way 
+    // $(".btn-delete").click(saveTask);
+
+    // The solution 
+    // On click inside of the list, if the target is btn delete task
+    $(".list").on("click", ".btn-delete", deleteTask);
     // Load Data from the server immediately
     loadTasks();
 }
