@@ -1,68 +1,120 @@
+/* 
+   GENERAL PAGE STYLES
+ */
+
 body {
-  font-family: "Poppins", sans-serif;
-  background-color: #EFF6FF;
-  color: #1F2937;
-  margin: 0;
-  padding: 20px;
-}
-h1{
-  text-align: center;
-}
-h1, p{
-  text-align: center;
+    font-family: "Poppins", sans-serif;
+    background-color: #EFF6FF;
+    color: #1F2937;
+    margin: 0;
+    padding: 20px;
 }
 
-h1, h2, h3 {
-  color: #1E3A5F;
-  font-weight: 700;
+h1,
+h2,
+h3 {
+    color: #1E3A5F;
+    font-weight: 700;
 }
 
-/* The Card Container */
+h1 {
+    text-align: center;
+}
+
+body > p {
+    text-align: center;
+}
+
+
+/* 
+   CARD CONTAINER
+ */
+
 .card {
-  background-color: #FFFFFF;
-  border-radius: 10px;
-  border-top: 5px solid #FACC15;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  padding: 20px;
-  margin-bottom: 20px; 
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    border-top: 5px solid #FACC15;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
 }
 
-/* Modern Responsive Grid */
+
+/* 
+   FORM
+ */
+
 .form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-input, select, textarea, button {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1em;
-  margin-top: 5px;
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(200px, 1fr)
+    );
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
 input,
 select,
 textarea {
-  width: 100%;
-  box-sizing: border-box;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    font-family: "Poppins", sans-serif;
+    font-size: 1em;
+    margin-top: 5px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #3B82F6;
 }
 
 
+/* 
+   GENERAL BUTTONS
+ */
+
 button {
-  background-color: #3B82F6;
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s;
+    padding: 10px 16px;
+    margin-top: 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3B82F6;
+    color: #FFFFFF;
+    font-family: "Poppins", sans-serif;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background-color 0.3s,
+        color 0.3s,
+        transform 0.2s;
 }
 
 button:hover {
-  background-color: #FACC15;
-  color: #1E3A5F;
+    background-color: #FACC15;
+    color: #1E3A5F;
+    transform: translateY(-1px);
 }
+
+
+/* 
+   TASK SECTION
+*/
+
+.task-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
 .task {
     display: flex;
     flex-wrap: wrap;
@@ -70,31 +122,53 @@ button:hover {
     justify-content: space-between;
     gap: 20px;
 
-    background-color: white;
+    background-color: #FFFFFF;
 
-    border: 1px solid #ddd;
-    border-left: 6px solid #6d809f;
+    border: 1px solid #DDDDDD;
+    border-left: 6px solid #6D809F;
     border-radius: 10px;
 
     padding: 20px;
     margin-bottom: 15px;
 
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
 }
+
+.task:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+
+
+/* 
+   TASK INFORMATION
+ */
 
 .task .info {
     flex: 1;
+    min-width: 200px;
 }
 
 .task h4 {
-    margin: 0 0 5px 0;
+    color: #1E3A5F;
+    margin: 0 0 5px;
     font-size: 20px;
 }
 
 .task p {
     margin: 0;
-    color: #666;
+    color: #666666;
+    text-align: left;
 }
+
+
+/* 
+   STATUS
+ */
 
 .task .status {
     background-color: #FEF3C7;
@@ -103,11 +177,75 @@ button:hover {
     border-radius: 20px;
     font-size: 14px;
     font-weight: 600;
+    white-space: nowrap;
 }
+
+
+/* 
+   DATE & BUDGET
+ */
 
 .date-budget {
     display: flex;
     flex-direction: column;
     text-align: right;
     gap: 5px;
+    font-size: 14px;
+}
+
+
+/* 
+   DELETE BUTTON
+ */
+
+.btn-delete {
+    background-color: #FEE2E2;
+    color: #B91C1C;
+}
+
+.btn-delete:hover {
+    background-color: #B91C1C;
+    color: #FFFFFF;
+}
+
+
+/* 
+   DELETE ALL BUTTON
+ */
+
+#btnDeleteAll {
+    background-color: #1E3A5F;
+    color: #FFFFFF;
+}
+
+#btnDeleteAll:hover {
+    background-color: #FACC15;
+    color: #1E3A5F;
+}
+
+
+/* 
+   MOBILE
+*/
+
+@media (max-width: 650px) {
+
+    .task-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .task {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .date-budget {
+        text-align: left;
+    }
+
+    .btn-delete,
+    #btnDeleteAll {
+        width: 100%;
+    }
 }

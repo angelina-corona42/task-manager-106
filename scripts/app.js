@@ -1,28 +1,21 @@
 // API = Address of the task server
 const API = "https://106api-b0bnggbsgnezbzcz.westus3-01.azurewebsites.net/api/tasks";
-/* YOUR BROWSER                SERVER
+
+
+/*
+YOUR BROWSER                         SERVER
 
 "Give me my tasks"
       │
-      ├──────────────→
+      ├──────────────────────────→
       │
-      │                     finds tasks
+      │                         finds tasks
       │
-      │←──────────────
+      │←──────────────────────────
       │
- receives tasks 
- */
-    // function init(){
-    // init --> wait until the event happens
-    // init() --> execute it NOW  
+receives tasks
+*/
 
-    //console.log("hello from the init");
-//}
-
-// window.onload = init;
-// function init{} wait until the page loads, then execute init 
-// force that the html and the css gets resolved before
-// that i execute the logic
 
 function saveTask(){
 
@@ -51,6 +44,7 @@ function saveTask(){
 
 
     // 3. Validate inputs
+
     if(title === ""){
         $("#txtTitle").css("border", "solid 2px red");
         hasError = true;
@@ -100,16 +94,25 @@ function saveTask(){
         // 5. Send Task to server
         $.ajax({
 
-            type: "POST",// http verb: CREATE
+            type: "POST", // HTTP verb: CREATE
+
             url: API,
-            data: JSON.stringify(taskToSave), // Convert the object to a string so the server can understand it
-            contentType: "application/json", // Tell the server what kind of data we are sending
 
-            success: function(created){ // created is just the variable name for the response from the server
+            // Convert the object to a string
+            // so the server can understand it
+            data: JSON.stringify(taskToSave),
 
+            // Tell the server what kind of data we are sending
+            contentType: "application/json",
+
+            success: function(created){
+
+                // created = response from server
                 console.log(created);
 
-                displayTask(created); // Reuse our display function to show the task
+                // Reuse display function
+                displayTask(created);
+
 
                 // Clear form fields
                 $("#txtTitle").val("");
@@ -118,179 +121,406 @@ function saveTask(){
                 $("#selDate").val("");
                 $("#selStatus").val("");
                 $("#numBudget").val("");
-
             },
 
             error: function(fails){
 
                 console.log(fails);
-
             }
 
         });
-
-
-    
     }
 }
+
+
 
 function displayTask(task){
 
     let syntax = `
-        <div class="task" style="border-left-color:${task.color}">
+        <div 
+            id="${task.id}"
+            class="task"
+            style="border-left-color:${task.color}"
+        >
 
             <div class="info">
+
                 <h4>${task.title}</h4>
+
                 <p>${task.desc}</p>
+
             </div>
 
-            <label class="status">${task.status}</label>
+
+            <label class="status">
+                ${task.status}
+            </label>
+
 
             <div class="date-budget">
-                <label>Due: ${task.date}</label>
-                <label>Budget: $${task.budget}</label>
+
+                <label>
+                    Due: ${task.date}
+                </label>
+
+                <label>
+                    Budget: $${task.budget}
+                </label>
+
             </div>
+
+
+            <button class="btn-delete">
+                Delete
+            </button>
 
         </div>
     `;
+
 
     // Inject the new HTML into the DOM Tree
     $(".list").append(syntax);
 }
 
+
+
 function loadTasks(){
-    // AJAX = Asynchronous JavaScript and XML 
-    //Allows to communicate with a server without refreshing the page
+
+    // AJAX = Asynchronous JavaScript and XML
+    // Allows us to communicate with a server
+    // without refreshing the page
 
     $.ajax({
 
-        type: "GET", // http verb: READ
+        type: "GET", // HTTP verb: READ
 
-        url: API,    // Desitnation of the server
+        url: API, // Destination of the server
 
-        dataType: "json", // Expected format of the response
+        dataType: "json", // Expected format of response
+
 
         success: function(data){
 
-            console.log("Server responded with: ", data);
+            console.log(
+                "Server responded with: ",
+                data
+            );
 
-            // Clear first, so repeat calls don't duplicate
+
+            // Clear first so repeat calls
+            // do not duplicate tasks
             $(".list").empty();
 
-            // Looping through every task
+
+            // Loop through every task
             for(let i = 0; i < data.length; i++){
 
-                displayTask(data[i]); // Reuse our display function to show the task
-
+                // Reuse our display function
+                displayTask(data[i]);
             }
-
         },
+
 
         error: function(err){
 
-            console.error("Error fetching data", err);
-
+            console.error(
+                "Error fetching data",
+                err
+            );
         }
 
     });
 }
 
+
+
 function update(){
+
     $.ajax({
-        type : "PUT", // http verb: Update
-        url: "https://106api-b0bnggbsgnezbzcz.westus3-01.azurewebsites.net/api/tasks/1",
+
+        type: "PUT", // HTTP verb: UPDATE
+
+        url: API + "/1",
+
         data: JSON.stringify({
-            title:"New message"
+
+            title: "New message"
+
         }),
+
         contentType: "application/json",
+
+
         success: function(response){
+
             console.log(response);
         },
+
+
         error: function(failure){
+
             console.log(failure);
         }
 
-    })
+    });
 }
 
+
+
 function deleteTask(){
+
     console.log("Deleting task");
 
-    // 1. Context: 'this' is the specific button that was clicked
+
+    // 1. 'this' is the specific
+    // Delete button that was clicked
     let btn = $(this);
 
-    // 2. Find the parent div with the class task
+
+    // 2. Find the parent div
+    // with the class task
     let taskElement = btn.parents(".task");
 
-    // 3. Get the ID that we save in the HTML
-    let id=taskElement.attr("id");
 
-    // Now use the ID to delete the element that you select
+    // 3. Get the ID saved in the HTML
+    let id = taskElement.attr("id");
+
 
     console.log(id);
 
+
+    // DELETE the selected Task
     $.ajax({
+
         type: "DELETE",
-        url: API + "/" + id, // URL / API / Tasks / x
+
+        url: API + "/" + id,
+
+
         success: function(){
-            taskElement.fadeOut(500, function(){
-                $(this).remove(); // Remove the task element from the DOM
-            }); 
-        }, 
+
+            // Remove task from screen
+            // only after server succeeds
+            taskElement.fadeOut(
+                500,
+                function(){
+
+                    $(this).remove();
+                }
+            );
+        },
+
+
         error: function(failure){
+
             console.log(failure);
         }
+
     });
 }
 
-function filter(status){
-    if (status === "all") { // = assing , == compare, === compare and respond w/ a true or false
-        $(".task").show();
-    } else {
-        $(".task").hide();
+
+
+// DELETE ALL TASKS
+function deleteAllTasks(){
+
+    console.log("Deleting all tasks");
+
+
+    // Find every Task currently displayed
+    let tasks = $(".task");
+
+
+    // If there are no Tasks, stop
+    if(tasks.length === 0){
+
+        alert("There are no tasks to delete.");
+
+        return;
     }
-    // Show only those that match 
-    // We cna look at the text inside the label
-    $(".task").each(function(){
-        let taskStatus = $(this).find(".status").text();
-        if (taskStatus === status) 
-        {
-            $(this).show();
-        } 
+
+
+    // Ask before deleting everything
+    let answer = confirm(
+        "Are you sure you want to delete all tasks?"
+    );
+
+
+    if(answer === false){
+
+        return;
+    }
+
+
+    // Loop through every Task
+    tasks.each(function(){
+
+        // 'this' is the current Task
+        // during this loop
+        let taskElement = $(this);
+
+
+        // Read the server ID
+        let id = taskElement.attr("id");
+
+
+        console.log(
+            "Deleting task ID:",
+            id
+        );
+
+
+        // Delete that specific Task
+        $.ajax({
+
+            type: "DELETE",
+
+            url: API + "/" + id,
+
+
+            success: function(){
+
+                taskElement.fadeOut(
+                    500,
+                    function(){
+
+                        $(this).remove();
+                    }
+                );
+            },
+
+
+            error: function(failure){
+
+                console.log(
+                    "Error deleting task:",
+                    id,
+                    failure
+                );
+            }
+
+        });
     });
 }
+
+
+
+function filter(status){
+
+    // IMPORTANT:
+    // Your buttons send "All"
+    // so this must also say "All"
+    if(status === "All"){
+
+        $(".task").show();
+
+    }else{
+
+        // Hide every Task first
+        $(".task").hide();
+
+
+        // Show only Tasks that match
+        $(".task").each(function(){
+
+            let taskStatus =
+                $(this)
+                .find(".status")
+                .text()
+                .trim();
+
+
+            if(taskStatus === status){
+
+                $(this).show();
+            }
+        });
+    }
+}
+
+
 
 function init(){
 
     console.log("App initialized");
 
+
     // Hookup the Save Button
     $("#btnSave").click(saveTask);
-    $("#btnAll").click(function(){filter("All")});
-    $("#btnDone").click(function(){filter("Completed")});
-    $("#btnNew").click(function(){filter("New")});
-    // The regular way 
-    // $(".btn-delete").click(saveTask);
 
-    // The solution 
-    // On click inside of the list, if the target is btn delete task
-    $(".list").on("click", ".btn-delete", deleteTask);
-    // Load Data from the server immediately
+
+    // Filter buttons
+    $("#btnAll").click(function(){
+
+        filter("All");
+    });
+
+
+    $("#btnDone").click(function(){
+
+        filter("Completed");
+    });
+
+
+    $("#btnNew").click(function(){
+
+        filter("New");
+    });
+
+
+    // Delete All button
+    $("#btnDeleteAll").click(
+        deleteAllTasks
+    );
+
+
+    /*
+    The regular way would not work well
+    because Delete buttons are created
+    dynamically:
+
+    $(".btn-delete").click(deleteTask);
+    */
+
+
+    // Event Delegation:
+    // Listen inside .list.
+    // If the target is .btn-delete,
+    // run deleteTask.
+    $(".list").on(
+        "click",
+        ".btn-delete",
+        deleteTask
+    );
+
+
+    // Load Data from server immediately
     loadTasks();
 }
 
+
 window.onload = init;
 
-// New way to use backticks , old way "Hello" + name + "!"
 
-/* 
-const name = "Angelina";
-let message = `Hello ${name}`; 
-*/
 
-// JSON = common way for programs to exchange data. It is a text format that looks like an object, but it is not an object. It is a string.
+// New way to use backticks:
+//
+// Old:
+// "Hello " + name + "!"
+//
+// New:
+// `Hello ${name}`
 
-/* Example of JSON
+
+/*
+JSON = common way for programs
+to exchange data.
+
+It is a text format that looks
+like an object, but it is a string.
+
+Example:
+
 [
     {
         "title": "Pay Bills",
